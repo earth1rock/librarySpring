@@ -38,4 +38,18 @@ public class BookDao
 	{
 		return jdbcTemplate.queryForObject("select * from book where id=?", new BeanPropertyRowMapper<>(Book.class), id);
 	}
+
+	public void update(int id, Book updatedBook)
+	{
+		jdbcTemplate.update("update book set title=?, author=?, year=? where id=?",
+				updatedBook.getTitle(),
+				updatedBook.getAuthor(),
+				updatedBook.getYear(),
+				id);
+	}
+
+	public void delete(int id)
+	{
+		jdbcTemplate.update("delete from book where id=?", id);
+	}
 }

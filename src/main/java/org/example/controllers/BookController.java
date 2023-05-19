@@ -39,7 +39,7 @@ public class BookController
 	public String create(@ModelAttribute("book") @Valid Book book, BindingResult bindingResult)
 	{
 		if (bindingResult.hasErrors())
-			return "redirect:/books/new";
+			return "/books/new";
 
 		bookDao.save(book);
 		return "redirect:/books";
@@ -50,5 +50,29 @@ public class BookController
 	{
 		model.addAttribute("book", bookDao.getBook(id));
 		return "/books/book";
+	}
+
+	@PostMapping("/book/{id}/edit")
+	public String editBookPage(@PathVariable("id") int id, Model model)
+	{
+		model.addAttribute("book", bookDao.getBook(id));
+		return "/books/edit";
+	}
+
+	@PatchMapping("/book/{id}/edit")
+	public String editBook(@PathVariable("id") int id, @ModelAttribute("book") @Valid Book book, BindingResult bindingResult)
+	{
+		if (bindingResult.hasErrors())
+			return "/books/edit";
+
+		bookDao.update(id, book);
+		return "redirect:/books/book/{id}";
+	}
+
+	@DeleteMapping("/book/{id}/delete")
+	public String deleteBook(@PathVariable("id") int id)
+	{
+		bookDao.delete(id);
+		return "redirect:/books";
 	}
 }

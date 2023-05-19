@@ -2,14 +2,21 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<meta charset="UTF-8">
-	<title>КнигаНейм</title>
+	<title th:text="|${book.getTitle()}, ${book.getAuthor()}, ${book.getYear()}|">КнигаНейм</title>
 </head>
 <body>
 
 <div th:object="${book}">
 	<p th:text="|*{getTitle()}, *{getAuthor()}, *{getYear()}|"></p>
 
-	<div th:if=""></div>
+	<hr>
+	<form th:method="POST" th:action="@{/books/book/{id}/edit(id=*{getId()})}">
+		<input type="submit" value="Редактировать">
+	</form>
+
+	<form th:method="DELETE" th:action="@{/books/book/{id}/delete(id=*{getId()})}">
+		<input type="submit" value="Удалить">
+	</form>
 </div>
 
 </body>

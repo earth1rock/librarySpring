@@ -20,7 +20,7 @@
 
 	<label for="year">Введите год: </label>
 	<input type="text" id="year" th:field="*{year}">
-	<div style="color: red" th:if="${#fields.hasErrors('year')}" th:errors="*{year}">Middle name error</div>
+	<div style="color: red" th:if="${#fields.hasErrors('year')}" th:errors="*{year}">Year name error</div>
 	<br>
 
 	<input type="submit" value="Create!">
