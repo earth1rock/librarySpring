@@ -9,13 +9,14 @@
 <div id="personMainInfo" th:text="|${person.getFullName()}, ${person.yearOfBirth}|"></div>
 <hr>
 
-<div th:if="">
-	<h4>Книги: </h4>
-	<br>
+<!--TODO change method to GET. Not it used to trim question mark in the end of url-->
+<form th:method="POST" th:action="@{/people/person/{id}/edit(id=${person.getId()})}">
+	<input type="submit" value="Редактировать">
+</form>
 
-	<p th:each=""></p>
-
-</div>
+<form th:method="DELETE" th:action="@{/people/person/{id}/delete(id=${person.getId()})}">
+	<input type="submit" value="Удалить">
+</form>
 
 </body>
 </html>

@@ -5,6 +5,9 @@ import jakarta.validation.constraints.Size;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.lang.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Person
 {
 	private int id;
@@ -24,6 +27,8 @@ public class Person
 	@Range(min = 1900, max = 2023, message = "Year of birth should be between 1900 and 2023")
 	//TODO replace min and max ages from file or other way
 	private int yearOfBirth;
+
+	private final List<Book> books = new ArrayList<>();
 
 	public Person()
 	{
@@ -91,5 +96,25 @@ public class Person
 	public String getFullName()
 	{
 		return String.format("%s %s %s", firstName, middleName, lastName);
+	}
+
+	public boolean hasBooks()
+	{
+		return !books.isEmpty();
+	}
+
+	public void addBook(Book book)
+	{
+		books.add(book);
+	}
+
+	public List<Book> getBooks()
+	{
+		return books;
+	}
+
+	public void addBooks(List<Book> bookList)
+	{
+		books.addAll(bookList);
 	}
 }

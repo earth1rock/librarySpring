@@ -19,6 +19,8 @@ public class Book
 	@Range(max = 2023, message = "Year should be not greater 2023")
 	private int year;
 
+	private Person owner;
+
 	public Book()
 	{
 	}
@@ -69,5 +71,15 @@ public class Book
 	public void setYear(int year)
 	{
 		this.year = year;
+	}
+
+	public Person getOwner()
+	{
+		return owner;
+	}
+
+	public void setOwner(Person owner)
+	{
+		this.owner = owner;
 	}
 }
