@@ -1,5 +1,6 @@
 package org.example.dao;
 
+import org.example.models.Book;
 import org.example.models.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -27,7 +28,23 @@ public class PersonDao
 
 	public Person getPerson(int id)
 	{
-		return jdbcTemplate.queryForObject("select * from person where id=?", new BeanPropertyRowMapper<>(Person.class), id);
+		Person person = jdbcTemplate.queryForObject("select * from person where id=?", new BeanPropertyRowMapper<>(Person.class), id);
+		if (person == null)
+			return null;
+
+		List<Book> books = jdbcTemplate.query("select book.id, book.title, book.author, book.year from book " +
+						"inner join person_book as pb on book.id = pb.id_book where pb.id_person=?",
+				(rs, rowNum) -> {
+					Book book = new Book();
+					book.setId(rs.getInt(1));
+					book.setTitle(rs.getString(2));
+					book.setAuthor(rs.getString(3));
+					book.setYear(rs.getInt(4));
+					book.setOwner(person);
+					return book;
+				}, id);
+		person.addBooks(books);
+		return person;
 	}
 
 	public void save(Person person)
