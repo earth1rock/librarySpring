@@ -1,7 +1,6 @@
 package org.example.models;
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.lang.Nullable;
 
@@ -12,21 +11,21 @@ public class Person
 {
 	private int id;
 
-	@NotEmpty(message = "First name should be not empty")
-	@Size(min = 2, max = 40, message = "Fist name should be between 2 and 40 characters")
+	@NotNull(message = "{person.firstName.notEmpty}")
+	@Range(min = 2, max = 40, message = "{person.firstName.range}")
 	private String firstName;
 
-	@NotEmpty(message = "Last name should be not empty")
-	@Size(min = 2, max = 40, message = "Last name should be between 2 and 40 characters")
+	@NotNull(message = "{person.lastName.notEmpty}")
+	@Range(min = 2, max = 40, message = "{person.lastName.range}")
 	private String lastName;
 
 	@Nullable
-	@Size(min = 2, max = 40, message = "Middle name should be between 2 and 40 characters")
+	@Range(min = 2, max = 40, message = "{person.middleName.range}")
 	private String middleName;
 
-	@Range(min = 1900, max = 2023, message = "Year of birth should be between 1900 and 2023")
-	//TODO replace min and max ages from file or other way
-	private int yearOfBirth;
+	@NotNull(message = "{person.yearOfBirth.notEmpty}")
+	@Range(min = 1900, max = 2023, message = "{person.yearOfBirth.range}")
+	private Integer yearOfBirth;
 
 	private final List<Book> books = new ArrayList<>();
 
@@ -34,7 +33,7 @@ public class Person
 	{
 	}
 
-	public Person(int id, String firstName, String lastName, @Nullable String middleName, int yearOfBirth)
+	public Person(int id, String firstName, String lastName, @Nullable String middleName, Integer yearOfBirth)
 	{
 		this.id = id;
 		this.firstName = firstName;
@@ -73,22 +72,23 @@ public class Person
 		this.lastName = lastName;
 	}
 
+	@Nullable
 	public String getMiddleName()
 	{
 		return middleName;
 	}
 
-	public void setMiddleName(String middleName)
+	public void setMiddleName(@Nullable String middleName)
 	{
 		this.middleName = middleName;
 	}
 
-	public int getYearOfBirth()
+	public Integer getYearOfBirth()
 	{
 		return yearOfBirth;
 	}
 
-	public void setYearOfBirth(int yearOfBirth)
+	public void setYearOfBirth(Integer yearOfBirth)
 	{
 		this.yearOfBirth = yearOfBirth;
 	}
