@@ -3,12 +3,16 @@ package org.example.controllers;
 import jakarta.validation.Valid;
 import org.example.dao.PersonDao;
 import org.example.models.Person;
+import org.example.util.PersonValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,12 +26,21 @@ public class PeopleController
 
 	private final PersonDao personDao;
 
-	//TODO validator
+	private final PersonValidator personValidator;
 
 	@Autowired
-	public PeopleController(PersonDao personDao)
+	public PeopleController(PersonDao personDao, PersonValidator personValidator)
 	{
 		this.personDao = personDao;
+		this.personValidator = personValidator;
+	}
+
+	// Return NULL value from input in HTML-form instead of empty string ("") by default
+	@InitBinder
+	public void initBinder(WebDataBinder binder)
+	{
+		StringTrimmerEditor editor = new StringTrimmerEditor(true);
+		binder.registerCustomEditor(String.class, editor);
 	}
 
 	@GetMapping()
@@ -53,6 +66,8 @@ public class PeopleController
 	@PostMapping("/new")
 	public String create(@ModelAttribute("person") @Valid Person person, BindingResult bindingResult)
 	{
+		personValidator.validate(person, bindingResult);
+
 		if (bindingResult.hasErrors())
 			return "/people/new";
 
@@ -72,6 +87,8 @@ public class PeopleController
 	@PatchMapping("/person/{id}/edit")
 	public String editPerson(@PathVariable("id") int personId, @ModelAttribute("person") @Valid Person person, BindingResult bindingResult)
 	{
+		personValidator.validate(person, bindingResult);
+
 		if (bindingResult.hasErrors())
 			return "/people/edit";
 

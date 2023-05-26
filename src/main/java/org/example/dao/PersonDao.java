@@ -70,4 +70,14 @@ public class PersonDao
 	{
 		jdbcTemplate.update("delete from person where id=?", id);
 	}
+
+	public boolean personExists(Person personToFind)
+	{
+		Person person = jdbcTemplate.query("select * from person where first_name=? and middle_name = ? and last_name=?", rs -> {
+			BeanPropertyRowMapper<Person> rowMapper = new BeanPropertyRowMapper<>(Person.class);
+			return rs.next() ? rowMapper.mapRow(rs, rs.getRow()) : null;
+		}, personToFind.getFirstName(), personToFind.getMiddleName(), personToFind.getLastName());
+
+		return person != null;
+	}
 }

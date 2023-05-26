@@ -24,9 +24,10 @@
 	<br>
 
 	<label for="yearOfBirth">Введите год рождения: </label>
-	<input type="text" id="yearOfBirth" th:field="*{yearOfBirth}">
+	<input type="text" minlength="4" maxlength="4" id="yearOfBirth" th:field="*{yearOfBirth}">
 	<div style="color: red" th:if="${#fields.hasErrors('yearOfBirth')}" th:errors="*{yearOfBirth}">Year of birth error</div>
 	<br>
+	<div style="color: red" th:if="${#fields.hasGlobalErrors()}" th:text="#{person.exists}">Person already exists</div>
 	<input type="submit" value="Create!">
 </form>
 
