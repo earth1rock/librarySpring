@@ -76,4 +76,18 @@ public class BookDao
 		getBook(bookId).setOwner(null);
 		jdbcTemplate.update("delete from person_book where id_book=?", bookId);
 	}
+
+	public boolean bookExists(Book bookToFind)
+	{
+		Book book = jdbcTemplate.query("select * from book where title=? and author=? and year=?",
+				rs -> {
+					BeanPropertyRowMapper<Book> rowMapper = new BeanPropertyRowMapper<>(Book.class);
+					return rs.next() ? rowMapper.mapRow(rs, rs.getRow()) : null;
+				},
+				bookToFind.getTitle(),
+				bookToFind.getAuthor(),
+				bookToFind.getYear());
+
+		return book != null;
+	}
 }
