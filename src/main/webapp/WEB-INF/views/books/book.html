@@ -10,7 +10,7 @@
 	<p th:text="|${book.getTitle()}, ${book.getAuthor()}, ${book.getYear()}|"></p>
 
 	<div th:if="${book.getOwner() == null}">
-		<p th:text="#{uiText.p.book.noOwner}">This book is free. To whom should she be assigned?</p>
+		<p th:text="#{uiText.p.book.noOwner}">This book is free. To whom should it be assigned?</p>
 		<form th:method="POST" th:action="@{/books/book/{id}/setOwner(id=${book.getId()})}">
 			<label for="person" th:text="#{uiText.label.book.setOwner}">Choose a person: </label>
 			<select th:object="${person}" th:field="${person.id}" id="person">
