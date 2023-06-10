@@ -1,6 +1,7 @@
 package org.example.models;
 
 import jakarta.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.lang.Nullable;
 
@@ -12,15 +13,15 @@ public class Person
 	private int id;
 
 	@NotNull(message = "{person.firstName.notEmpty}")
-	@Range(min = 2, max = 40, message = "{person.firstName.range}")
+	@Length(min = 2, max = 40, message = "{person.firstName.range}")
 	private String firstName;
 
 	@NotNull(message = "{person.lastName.notEmpty}")
-	@Range(min = 2, max = 40, message = "{person.lastName.range}")
+	@Length(min = 2, max = 40, message = "{person.lastName.range}")
 	private String lastName;
 
 	@Nullable
-	@Range(min = 2, max = 40, message = "{person.middleName.range}")
+	@Length(min = 2, max = 40, message = "{person.middleName.range}")
 	private String middleName;
 
 	@NotNull(message = "{person.yearOfBirth.notEmpty}")
