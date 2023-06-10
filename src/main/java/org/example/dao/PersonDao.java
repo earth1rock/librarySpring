@@ -73,14 +73,15 @@ public class PersonDao
 
 	public boolean personExists(Person personToFind)
 	{
-		Person person = jdbcTemplate.query("select * from person where first_name=? and middle_name = ? and last_name=?",
+		Person person = jdbcTemplate.query("select * from person where first_name=? and middle_name = ? and last_name=? and year_of_birth=?",
 				rs -> {
 					BeanPropertyRowMapper<Person> rowMapper = new BeanPropertyRowMapper<>(Person.class);
 					return rs.next() ? rowMapper.mapRow(rs, rs.getRow()) : null;
 				},
 				personToFind.getFirstName(),
 				personToFind.getMiddleName(),
-				personToFind.getLastName());
+				personToFind.getLastName(),
+				personToFind.getYearOfBirth());
 
 		return person != null;
 	}

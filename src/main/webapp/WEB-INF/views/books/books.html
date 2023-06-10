@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<meta charset="UTF-8">
-	<title>Все книги</title>
+	<title th:text="#{uiText.title.books.books}">Books</title>
 </head>
 <body>
 
@@ -10,6 +10,6 @@
 	<a th:href="@{/books/book/{id}(id=${book.getId()})}" th:text="|${book.getTitle()}, ${book.getAuthor()}, ${book.getYear()}|">Book</a>
 </div>
 <hr>
-<a th:href="@{/books/new}" th:text="'Добавить книгу'"></a>
+<a th:href="@{/books/new}" th:text="#{uiText.button.book.create}">Create a book!</a>
 </body>
 </html>

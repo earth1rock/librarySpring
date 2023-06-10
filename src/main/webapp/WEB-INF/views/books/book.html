@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<meta charset="UTF-8">
-	<title th:text="|${book.getTitle()}, ${book.getAuthor()}, ${book.getYear()}|">КнигаНейм</title>
+	<title th:text="|${book.getTitle()}, ${book.getAuthor()}, ${book.getYear()}|">Book</title>
 </head>
 <body>
 
@@ -10,30 +10,30 @@
 	<p th:text="|${book.getTitle()}, ${book.getAuthor()}, ${book.getYear()}|"></p>
 
 	<div th:if="${book.getOwner() == null}">
-		<p>Эта книга свободна. Кому назначить ее?</p>
+		<p th:text="#{uiText.p.book.noOwner}">This book is free. To whom should it be assigned?</p>
 		<form th:method="POST" th:action="@{/books/book/{id}/setOwner(id=${book.getId()})}">
-			<label for="person">Выберите человека: </label>
+			<label for="person" th:text="#{uiText.label.book.setOwner}">Choose a person: </label>
 			<select th:object="${person}" th:field="${person.id}" id="person">
 				<option th:each="person : ${people}" th:value="${person.getId()}" th:text="${person.getFullName()}"></option>
 			</select>
-			<input type="submit" value="Назначить книгу">
+			<input type="submit" th:value="#{uiText.button.book.assign}" value="Assign book!">
 		</form>
 	</div>
 
 	<div th:if="${book.getOwner() != null}">
-		<p th:text="|Книга сейчас у: ${book.getOwner().getFullName()}|"></p>
+		<p th:text="#{uiText.p.book.owner(${book.getOwner().getFullName()})}">The book has an owner.</p>
 		<form th:method="POST" th:action="@{/books/book/{id}/releaseOwner(id=${book.getId()})}">
-			<input type="submit" value="Освободить книгу">
+			<input type="submit" th:value="#{uiText.button.book.release}" value="Release a book!">
 		</form>
 	</div>
 
 	<hr>
 	<form th:method="POST" th:action="@{/books/book/{id}/edit(id=${book.getId()})}">
-		<input type="submit" value="Редактировать">
+		<input type="submit" th:value="#{uiText.button.book.edit}" value="Edit a book!">
 	</form>
 
 	<form th:method="DELETE" th:action="@{/books/book/{id}/delete(id=${book.getId()})}">
-		<input type="submit" value="Удалить">
+		<input type="submit" th:value="#{uiText.button.book.delete}" value="Delete a book!">
 	</form>
 </div>
 
