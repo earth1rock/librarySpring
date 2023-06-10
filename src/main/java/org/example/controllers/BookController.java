@@ -5,6 +5,7 @@ import org.example.dao.BookDao;
 import org.example.dao.PersonDao;
 import org.example.models.Book;
 import org.example.models.Person;
+import org.example.util.BookValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,11 +28,14 @@ public class BookController
 	private final BookDao bookDao;
 	private final PersonDao personDao;
 
+	private final BookValidator bookValidator;
+
 	@Autowired
-	public BookController(BookDao bookDao, PersonDao personDao)
+	public BookController(BookDao bookDao, PersonDao personDao, BookValidator bookValidator)
 	{
 		this.bookDao = bookDao;
 		this.personDao = personDao;
+		this.bookValidator = bookValidator;
 	}
 
 	@GetMapping()
@@ -50,6 +54,8 @@ public class BookController
 	@PostMapping("/new")
 	public String create(@ModelAttribute("book") @Valid Book book, BindingResult bindingResult)
 	{
+		bookValidator.validate(book, bindingResult);
+
 		if (bindingResult.hasErrors())
 			return "/books/new";
 
@@ -84,6 +90,8 @@ public class BookController
 	@PatchMapping("/book/{id}/edit")
 	public String editBook(@PathVariable("id") int bookId, @ModelAttribute("book") @Valid Book book, BindingResult bindingResult)
 	{
+		bookValidator.validate(book, bindingResult);
+
 		if (bindingResult.hasErrors())
 			return "/books/edit";
 

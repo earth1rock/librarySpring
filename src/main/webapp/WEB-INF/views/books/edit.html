@@ -18,10 +18,10 @@
 	<br>
 
 	<label for="year">Введите год: </label>
-	<input type="text" id="year" th:field="*{year}">
+	<input type="text" minlength="4" maxlength="4" id="year" th:field="*{year}">
 	<div style="color: red" th:if="${#fields.hasErrors('year')}" th:errors="*{year}">Year name error</div>
 	<br>
-
+	<div style="color: red" th:if="${#fields.hasGlobalErrors()}" th:text="#{book.exists}">Book already exists</div>
 	<input type="submit" value="Редактировать!">
 </form>
 </body>
