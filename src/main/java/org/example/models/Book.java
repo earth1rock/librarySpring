@@ -1,33 +1,55 @@
 package org.example.models;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 
+@Entity
+@Table(name = "book")
 public class Book
 {
 
+	@Id
+	@Column(name = "id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
 	@NotEmpty(message = "Title should be not empty")
 	@Length(max = 100)
+	@Column(name = "title")
 	private String title;
 
 	@NotEmpty(message = "Author should be not empty")
+	@Column(name = "author")
 	private String author;
 
 	@Range(max = 2023, message = "Year should be not greater 2023")
+	@Column(name = "year")
 	private int year;
 
+	@ManyToOne
+	@JoinTable(
+			name = "person_book",
+			joinColumns = @JoinColumn(name = "id_book"),
+			inverseJoinColumns = @JoinColumn(name = "id_person")
+	)
 	private Person owner;
 
 	public Book()
 	{
 	}
 
-	public Book(int id, String title, String author, int year)
+	public Book(String title, String author, int year)
 	{
-		this.id = id;
 		this.title = title;
 		this.author = author;
 		this.year = year;
