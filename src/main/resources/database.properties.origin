@@ -1,5 +1,0 @@
-# write your own credentials in format "key=value" and remove ".origin" postfix in filename
-driver=
-url=
-user=
-password=
