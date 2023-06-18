@@ -88,14 +88,14 @@ public class BookController
 	}
 
 	@PatchMapping("/book/{id}/edit")
-	public String editBook(@PathVariable("id") int bookId, @ModelAttribute("book") @Valid Book book, BindingResult bindingResult)
+	public String editBook(@ModelAttribute("book") @Valid Book book, BindingResult bindingResult)
 	{
 		bookValidator.validate(book, bindingResult);
 
 		if (bindingResult.hasErrors())
 			return "/books/edit";
 
-		bookDao.update(bookId, book);
+		bookDao.update(book);
 		return "redirect:/books/book/{id}";
 	}
 

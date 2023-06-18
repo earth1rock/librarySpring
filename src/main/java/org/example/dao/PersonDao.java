@@ -1,88 +1,66 @@
 package org.example.dao;
 
-import org.example.models.Book;
 import org.example.models.Person;
+import org.hibernate.Hibernate;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Component
 public class PersonDao
 {
-
-	private final JdbcTemplate jdbcTemplate;
+	private final SessionFactory sessionFactory;
 
 	@Autowired
-	public PersonDao(JdbcTemplate jdbcTemplate)
+	public PersonDao(SessionFactory sessionFactory)
 	{
-		this.jdbcTemplate = jdbcTemplate;
+		this.sessionFactory = sessionFactory;
 	}
 
+	@Transactional(readOnly = true)
 	public List<Person> people()
 	{
-		return jdbcTemplate.query("select * from person", new BeanPropertyRowMapper<>(Person.class));
+		return sessionFactory.getCurrentSession().createQuery("select p from Person p", Person.class).getResultList();
 	}
 
+	@Transactional(readOnly = true)
 	public Person getPerson(int id)
 	{
-		Person person = jdbcTemplate.queryForObject("select * from person where id=?", new BeanPropertyRowMapper<>(Person.class), id);
-		if (person == null)
-			return null;
+		return sessionFactory.getCurrentSession().get(Person.class, id);
+	}
 
-		List<Book> books = jdbcTemplate.query("select book.id, book.title, book.author, book.year from book " +
-						"inner join person_book as pb on book.id = pb.id_book where pb.id_person=?",
-				(rs, rowNum) -> {
-					Book book = new Book();
-					book.setId(rs.getInt(1));
-					book.setTitle(rs.getString(2));
-					book.setAuthor(rs.getString(3));
-					book.setYear(rs.getInt(4));
-					book.setOwner(person);
-					return book;
-				}, id);
-		person.addBooks(books);
+	@Transactional(readOnly = true)
+	public Person getPersonWithBooks(int id)
+	{
+		Person person = sessionFactory.getCurrentSession().get(Person.class, id);
+		Hibernate.initialize(person.getBooks());
 		return person;
 	}
 
+	@Transactional
 	public void save(Person person)
 	{
-		jdbcTemplate.update("insert into person(first_name, middle_name, last_name, year_of_birth) values (?, ?, ?, ?)",
-				person.getFirstName(),
-				person.getMiddleName(),
-				person.getLastName(),
-				person.getYearOfBirth());
+		sessionFactory.getCurrentSession().persist(person);
 	}
 
-	public void update(int id, Person person)
+	@Transactional
+	public void update(Person person)
 	{
-		jdbcTemplate.update("update person set first_name=?, middle_name=?, last_name=?, year_of_birth=? where id=?",
-				person.getFirstName(),
-				person.getMiddleName(),
-				person.getLastName(),
-				person.getYearOfBirth(),
-				id);
+		sessionFactory.getCurrentSession().merge(person);
 	}
 
+	@Transactional
 	public void delete(int id)
 	{
-		jdbcTemplate.update("delete from person where id=?", id);
+		sessionFactory.getCurrentSession().remove(getPerson(id));
 	}
 
+	@Transactional(readOnly = true)
 	public boolean personExists(Person personToFind)
 	{
-		Person person = jdbcTemplate.query("select * from person where first_name=? and middle_name = ? and last_name=? and year_of_birth=?",
-				rs -> {
-					BeanPropertyRowMapper<Person> rowMapper = new BeanPropertyRowMapper<>(Person.class);
-					return rs.next() ? rowMapper.mapRow(rs, rs.getRow()) : null;
-				},
-				personToFind.getFirstName(),
-				personToFind.getMiddleName(),
-				personToFind.getLastName(),
-				personToFind.getYearOfBirth());
-
-		return person != null;
+		return sessionFactory.getCurrentSession().contains(personToFind);
 	}
 }

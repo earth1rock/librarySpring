@@ -11,6 +11,10 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.orm.hibernate5.HibernateTransactionManager;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.LocaleResolver;
@@ -26,11 +30,13 @@ import javax.sql.DataSource;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Properties;
 
 @Configuration
 @ComponentScan(value = {"org.example"})
 @EnableWebMvc
-@PropertySource({"classpath:database.properties"})
+@PropertySource({"classpath:hibernate.properties"})
+@EnableTransactionManagement
 public class SpringConfig implements WebMvcConfigurer
 {
 
@@ -77,10 +83,10 @@ public class SpringConfig implements WebMvcConfigurer
 	public DataSource dataSource()
 	{
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
-		dataSource.setDriverClassName(Objects.requireNonNull(environment.getProperty("driver")));
-		dataSource.setUrl(environment.getProperty("url"));
-		dataSource.setUsername(environment.getProperty("user"));
-		dataSource.setPassword(environment.getProperty("password"));
+		dataSource.setDriverClassName(Objects.requireNonNull(environment.getProperty("hibernate.driver_class")));
+		dataSource.setUrl(environment.getProperty("hibernate.connection.url"));
+		dataSource.setUsername(environment.getProperty("hibernate.connection.username"));
+		dataSource.setPassword(environment.getProperty("hibernate.connection.password"));
 
 		return dataSource;
 	}
@@ -89,6 +95,34 @@ public class SpringConfig implements WebMvcConfigurer
 	public JdbcTemplate jdbcTemplate()
 	{
 		return new JdbcTemplate(dataSource());
+	}
+
+	private Properties hibernateProperties()
+	{
+		Properties properties = new Properties();
+		properties.put("hibernate.dialect", environment.getRequiredProperty("hibernate.dialect"));
+		properties.put("hibernate.show_sql", environment.getRequiredProperty("hibernate.show_sql"));
+
+		return properties;
+	}
+
+	@Bean
+	public LocalSessionFactoryBean sessionFactory()
+	{
+		LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
+		sessionFactoryBean.setDataSource(dataSource());
+		sessionFactoryBean.setPackagesToScan("org.example.models");
+		sessionFactoryBean.setHibernateProperties(hibernateProperties());
+
+		return sessionFactoryBean;
+	}
+
+	@Bean
+	public PlatformTransactionManager hibernateTransactionManager()
+	{
+		HibernateTransactionManager transactionManager = new HibernateTransactionManager();
+		transactionManager.setSessionFactory(sessionFactory().getObject());
+		return transactionManager;
 	}
 
 	@Bean
