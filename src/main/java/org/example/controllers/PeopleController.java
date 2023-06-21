@@ -6,6 +6,7 @@ import org.example.services.PeopleService;
 import org.example.util.PersonValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,6 +19,11 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Controller
 @RequestMapping("/people")
@@ -44,9 +50,20 @@ public class PeopleController
 	}
 
 	@GetMapping()
-	public String people(Model model)
+	public String people(@RequestParam(name = "page", defaultValue = "1") int page,
+						 @RequestParam(name = "people_per_page", defaultValue = "10") int peoplePerPage,
+						 Model model)
 	{
-		model.addAttribute("people", peopleService.findAll());
+		Page<Person> personPage = peopleService.findAll(page - 1, peoplePerPage);
+		int totalPages = personPage.getTotalPages();
+		if (totalPages > 1)
+		{
+			List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+					.boxed()
+					.collect(Collectors.toList());
+			model.addAttribute("pageNumbers", pageNumbers);
+		}
+		model.addAttribute("people", personPage);
 		return "/people/people";
 	}
 

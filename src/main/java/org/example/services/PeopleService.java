@@ -4,6 +4,8 @@ import org.example.models.Person;
 import org.example.repositories.PeopleRepository;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,9 +24,16 @@ public class PeopleService
 		this.peopleRepository = peopleRepository;
 	}
 
+
+	//TODO fix it via use search (SORT)
 	public List<Person> findAll()
 	{
 		return peopleRepository.findAll();
+	}
+
+	public Page<Person> findAll(int page, int personPerPage)
+	{
+		return peopleRepository.findAll(PageRequest.of(page, personPerPage));
 	}
 
 	public Person findOneById(int id)
