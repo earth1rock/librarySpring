@@ -39,9 +39,11 @@ public class BookController
 	@GetMapping()
 	public String books(@RequestParam(name = "page", defaultValue = "1") int page,
 						@RequestParam(name = "books_per_page", defaultValue = "10") int booksPerPage,
+						@RequestParam(name = "sort_by_year", defaultValue = "false") boolean sortByYear,
 						Model model)
 	{
-		Page<Book> bookPage = booksService.findAll(page - 1, booksPerPage);
+		Page<Book> bookPage = booksService.findAll(page - 1, booksPerPage, sortByYear);
+
 		int totalPages = bookPage.getTotalPages();
 		if (totalPages > 1)
 		{
