@@ -5,6 +5,8 @@ import org.example.models.Person;
 import org.example.repositories.BooksRepository;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,5 +78,13 @@ public class BooksService
 	public boolean exists(Book book)
 	{
 		return booksRepository.existsByTitleAndAuthor(book.getTitle(), book.getAuthor());
+	}
+
+	public Page<Book> findByTitleStartsWithIgnoreCase(String title)
+	{
+		Page<Book> books = booksRepository.findAllByTitleStartsWithIgnoreCase(title, Pageable.unpaged());
+		//TODO maybe need to add links to each book to optimize queries
+		books.getContent().forEach(book -> Hibernate.initialize(book.getOwner()));
+		return books;
 	}
 }
