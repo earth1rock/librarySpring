@@ -11,7 +11,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -96,10 +103,25 @@ public class BookController
 
 		model.addAttribute("book", book);
 		if (book.getOwner() == null)
-			//TODO fix it via use search (SORT)
 			model.addAttribute("people", peopleService.findAll());
 
 		return "/books/book";
+	}
+
+	@GetMapping("/search")
+	public String bookSearch(@RequestParam(name = "title", required = false) String title, Model model)
+	{
+		if (title == null)
+			return "/books/search";
+
+		if (title.isBlank())
+			model.addAttribute("isTitleBlank", true);
+		else
+		{
+			model.addAttribute("title", title);
+			model.addAttribute("books", booksService.findByTitleStartsWithIgnoreCase(title));
+		}
+		return "/books/search";
 	}
 
 	@PostMapping("/book/{id}/edit")
