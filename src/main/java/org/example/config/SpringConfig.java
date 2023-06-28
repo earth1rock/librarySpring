@@ -21,6 +21,7 @@ import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.FixedLocaleResolver;
@@ -161,5 +162,11 @@ public class SpringConfig implements WebMvcConfigurer
 		localeResolver.setDefaultLocale(new Locale("ru", "RU"));
 //		localeResolver.setDefaultLocale(Locale.ENGLISH);
 		return localeResolver;
+	}
+
+	@Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry)
+	{
+		registry.addResourceHandler("/resources/css/**").addResourceLocations("/WEB-INF/resources/css/");
 	}
 }

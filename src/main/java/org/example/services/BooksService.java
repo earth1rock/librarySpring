@@ -6,11 +6,12 @@ import org.example.repositories.BooksRepository;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,9 +26,13 @@ public class BooksService
 		this.booksRepository = booksRepository;
 	}
 
-	public List<Book> findAll()
+	public Page<Book> findAll(int page, int booksPerPage, boolean sortByYear)
 	{
-		return booksRepository.findAll();
+		return booksRepository.findAll(PageRequest.of(
+				page,
+				booksPerPage,
+				sortByYear ? Sort.sort(Book.class).by(Book::getYear) : Sort.unsorted())
+		);
 	}
 
 	public Book findOneById(int id)
