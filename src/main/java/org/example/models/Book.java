@@ -24,16 +24,16 @@ public class Book
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-	@NotEmpty(message = "Title should be not empty")
+	@NotEmpty(message = "{person.book.title.notEmpty}")
 	@Length(max = 100)
 	@Column(name = "title")
 	private String title;
 
-	@NotEmpty(message = "Author should be not empty")
+	@NotEmpty(message = "{person.book.author.notEmpty}")
 	@Column(name = "author")
 	private String author;
 
-	@Range(max = 2023, message = "Year should be not greater 2023")
+	@Range(max = 2023, message = "{person.book.year.range}")
 	@Column(name = "year")
 	private int year;
 
